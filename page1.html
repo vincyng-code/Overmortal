@@ -1,0 +1,1478 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>化靈臺升級計算器</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Microsoft JhengHei', '微軟正黑體', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            background-color: #f5f0e6;
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #d4b483;
+            background-color: #fff;
+            border-radius: 15px 15px 0 0;
+            padding: 30px 20px 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        h1 {
+            color: #8b4513;
+            margin-top: 0;
+            font-size: 2rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .subtitle {
+            color: #a0522d;
+            font-size: 1rem;
+            margin-top: 5px;
+        }
+        
+        .breakthrough-info {
+            background-color: #f9f5eb;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 25px auto;
+            max-width: 800px;
+            border: 1px solid #e0d6c2;
+        }
+        
+        .breakthrough-title {
+            color: #8b4513;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .breakthrough-title:before {
+            content: "⏰";
+            margin-right: 10px;
+        }
+        
+        .breakthrough-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        @media (max-width: 600px) {
+            .breakthrough-inputs {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .countdown-display {
+            background-color: #8b4513;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.4rem;
+            margin-top: 15px;
+            box-shadow: 0 5px 15px rgba(139, 69, 19, 0.2);
+        }
+        
+        .countdown-value {
+            font-size: 1.8rem;
+            margin: 10px 0;
+            color: #ffd700;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-top: 20px;
+        }
+        
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .input-section, .results-section {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid #e0d6c2;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .section-title {
+            color: #8b4513;
+            border-bottom: 1px solid #d4b483;
+            padding-bottom: 10px;
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title:before {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .input-section .section-title:before {
+            content: "📊";
+        }
+        
+        .results-section .section-title:before {
+            content: "📈";
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #5d4037;
+        }
+        
+        select, input[type="number"], input[type="text"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #c9b8a4;
+            border-radius: 8px;
+            font-size: 1rem;
+            background-color: #fff;
+            transition: border-color 0.3s;
+        }
+        
+        select:focus, input[type="number"]:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: #8b4513;
+            box-shadow: 0 0 0 2px rgba(139, 69, 19, 0.1);
+        }
+        
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        @media (max-width: 600px) {
+            .input-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .time-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+        }
+        
+        @media (max-width: 500px) {
+            .time-inputs {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        @media (max-width: 500px) {
+            .button-group {
+                flex-direction: column;
+            }
+        }
+        
+        button {
+            padding: 14px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+        }
+        
+        #calculateBtn {
+            background-color: #8b4513;
+            color: white;
+        }
+        
+        #calculateBtn:hover {
+            background-color: #a0522d;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 69, 19, 0.2);
+        }
+        
+        #resetBtn {
+            background-color: #b0a18e;
+            color: white;
+        }
+        
+        #resetBtn:hover {
+            background-color: #9c8e7d;
+        }
+        
+        .result-item {
+            background-color: #f9f5eb;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 5px solid #8b4513;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .result-title {
+            font-weight: bold;
+            color: #8b4513;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .result-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #5d4037;
+            margin: 10px 0;
+            word-break: break-word;
+        }
+        
+        @media (max-width: 500px) {
+            .result-value {
+                font-size: 1.3rem;
+            }
+        }
+        
+        .highlight {
+            color: #d35400;
+            font-size: 1.8rem;
+        }
+        
+        @media (max-width: 500px) {
+            .highlight {
+                font-size: 1.5rem;
+            }
+        }
+        
+        .warning {
+            color: #c0392b;
+            font-weight: bold;
+        }
+        
+        .success {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        
+        .info-text {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+            font-style: italic;
+        }
+        
+        .breakdown-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        .breakdown-table th, .breakdown-table td {
+            padding: 10px 12px;
+            text-align: center;
+            border: 1px solid #e0d6c2;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 500px) {
+            .breakdown-table th, .breakdown-table td {
+                padding: 8px 6px;
+                font-size: 0.85rem;
+            }
+        }
+        
+        .breakdown-table th {
+            background-color: #f1e8d9;
+            color: #5d4037;
+            font-weight: bold;
+        }
+        
+        .breakdown-table tr:nth-child(even) {
+            background-color: #f9f5eb;
+        }
+        
+        .advance-options {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px dashed #d4b483;
+        }
+        
+        .advance-title {
+            font-weight: bold;
+            color: #8b4513;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+        
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .checkbox-container input {
+            width: auto;
+            margin-right: 10px;
+            min-width: 18px;
+            min-height: 18px;
+        }
+        
+        .level-selects {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        @media (max-width: 600px) {
+            .level-selects {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .level-select {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .note-box {
+            background-color: #e8f4fd;
+            border-left: 5px solid #3498db;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            font-size: 0.9rem;
+        }
+        
+        .note-title {
+            font-weight: bold;
+            color: #2980b9;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e0d6c2;
+            color: #777;
+            font-size: 0.9rem;
+            padding-bottom: 20px;
+        }
+        
+        .compact-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .attribute-levels {
+            background-color: #f9f5eb;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e0d6c2;
+            margin-bottom: 20px;
+        }
+        
+        .compact-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        @media (max-width: 700px) {
+            .compact-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .monster-select-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .monster-power {
+            color: #8b4513;
+            font-weight: bold;
+        }
+        
+        .mobile-optimized {
+            display: block;
+        }
+        
+        .desktop-only {
+            display: none;
+        }
+        
+        @media (min-width: 768px) {
+            .mobile-optimized {
+                display: none;
+            }
+            
+            .desktop-only {
+                display: block;
+            }
+        }
+        
+        .data-source {
+            font-size: 0.8rem;
+            color: #888;
+            text-align: right;
+            margin-top: 5px;
+        }
+        
+        .countdown-timer {
+            font-family: 'Courier New', monospace;
+            letter-spacing: 2px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .time-unit {
+            display: inline-block;
+            min-width: 70px;
+            text-align: center;
+            margin: 0 5px;
+        }
+        
+        @media (max-width: 500px) {
+            .time-unit {
+                min-width: 60px;
+                margin: 0 3px;
+            }
+        }
+        
+        .time-value {
+            font-size: 1.8rem;
+            color: #ffd700;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 500px) {
+            .time-value {
+                font-size: 1.5rem;
+            }
+        }
+        
+        .time-label {
+            font-size: 0.8rem;
+            color: #ffcc80;
+            display: block;
+            margin-top: 5px;
+        }
+        
+        .monster-option {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .monster-option-name {
+            font-weight: bold;
+        }
+        
+        .monster-option-power {
+            color: #8b4513;
+        }
+        
+        .monster-option-souls {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        
+        .beijing-time {
+            font-size: 0.9rem;
+            color: #fff;
+            margin-top: 10px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .current-time {
+            color: #ffcc80;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>一念逍遙 - 化靈臺升級計算器</h1>
+            <div class="subtitle">根據官方數據計算化靈臺升級所需妖魄與萬妖挑戰次數</div>
+        </header>
+        
+        <div class="breakthrough-info">
+            <div class="breakthrough-title">突破時間設定 (北京時間)</div>
+            <div class="breakthrough-inputs">
+                <div class="form-group">
+                    <label for="daysToBreakthrough">天數：</label>
+                    <input type="number" id="daysToBreakthrough" min="0" value="0" placeholder="天數">
+                </div>
+                <div class="form-group">
+                    <label for="hoursToBreakthrough">小時：</label>
+                    <input type="number" id="hoursToBreakthrough" min="0" max="23" value="0" placeholder="小時">
+                </div>
+                <div class="form-group">
+                    <label for="minutesToBreakthrough">分鐘：</label>
+                    <input type="number" id="minutesToBreakthrough" min="0" max="59" value="0" placeholder="分鐘">
+                </div>
+            </div>
+            
+            <div id="countdownContainer" style="display: none;">
+                <div class="countdown-display">
+                    <div>距離突破還有</div>
+                    <div class="countdown-timer">
+                        <span class="time-unit">
+                            <span id="countdownDays" class="time-value">0</span>
+                            <span class="time-label">天</span>
+                        </span>
+                        <span class="time-unit">
+                            <span id="countdownHours" class="time-value">0</span>
+                            <span class="time-label">小時</span>
+                        </span>
+                        <span class="time-unit">
+                            <span id="countdownMinutes" class="time-value">0</span>
+                            <span class="time-label">分鐘</span>
+                        </span>
+                    </div>
+                    <div class="beijing-time">
+                        當前北京時間：<span id="currentBeijingTime" class="current-time">00:00:00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="input-section">
+                <h2 class="section-title">當前狀態設定</h2>
+                
+                <div class="form-group">
+                    <label for="realm">選擇當前境界：</label>
+                    <select id="realm">
+                        <option value="人界">人界</option>
+                        <option value="返虛">返虛</option>
+                        <option value="合體">合體</option>
+                        <option value="大成">大成</option>
+                        <option value="渡劫">渡劫</option>
+                        <option value="真仙">真仙</option>
+                        <option value="金仙">金仙</option>
+                        <option value="太乙">太乙</option>
+                        <option value="大羅">大羅</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <div class="attribute-levels">
+                        <label>當前屬性等級：</label>
+                        <div class="compact-row">
+                            <div class="level-select">
+                                <label for="cultivation">修為：</label>
+                                <select id="cultivation">
+                                    <!-- 選項將由JavaScript生成 -->
+                                </select>
+                            </div>
+                            <div class="level-select">
+                                <label for="quality">品質：</label>
+                                <select id="quality">
+                                    <!-- 選項將由JavaScript生成 -->
+                                </select>
+                            </div>
+                            <div class="level-select">
+                                <label for="spiritFlow">靈湧：</label>
+                                <select id="spiritFlow">
+                                    <!-- 選項將由JavaScript生成 -->
+                                </select>
+                            </div>
+                            <div class="level-select">
+                                <label for="highQuality">高品：</label>
+                                <select id="highQuality">
+                                    <!-- 選項將由JavaScript生成 -->
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="monsterSelect">萬妖首領與可獲妖魄：</label>
+                    <select id="monsterSelect">
+                        <!-- 選項將由JavaScript根據境界生成 -->
+                    </select>
+                    <div class="monster-select-info">
+                        <span id="monsterPower">戰力要求：無</span>
+                        <span id="monsterSouls">妖魄：0</span>
+                    </div>
+                    <div class="data-source">*數據基於當前境界可挑戰的萬妖首領</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="tickets">預計使用萬妖令數量：</label>
+                    <input type="number" id="tickets" min="0" value="0">
+                    <div class="info-text">每周基礎3場萬妖挑戰，使用萬妖令可增加挑戰場次</div>
+                </div>
+                
+                <div class="advance-options">
+                    <div class="advance-title">進階選項：</div>
+                    
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="considerWeek" checked>
+                        <label for="considerWeek">考慮萬妖開放時間（週三至週日）</label>
+                    </div>
+                    
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="keepThreeBattles" checked>
+                        <label for="keepThreeBattles">嘗試為突破當週保留3次挑戰機會</label>
+                    </div>
+                    
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="includeSundayBonus">
+                        <label for="includeSundayBonus">考慮週日23:59結算可多得妖魄</label>
+                    </div>
+                    
+                    <div id="sundayBonusOptions" style="display: none; margin-left: 25px; margin-top: 10px;">
+                        <div class="form-group">
+                            <label for="sundayRank">週日結算排名：</label>
+                            <select id="sundayRank">
+                                <option value="1">第1名（+？妖魄）</option>
+                                <option value="2-3">第2-3名（+？妖魄）</option>
+                                <option value="4-10">第4-10名（+240妖魄）</option>
+                                <option value="11-50">第11-50名（+120妖魄）</option>
+                                <option value="other">50名以後（無額外妖魄）</option>
+                            </select>
+                            <div class="info-text">排名越高，週日結算額外妖魄越多</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="button-group">
+                    <button id="calculateBtn">計算升級需求</button>
+                    <button id="resetBtn">重置輸入</button>
+                </div>
+            </div>
+            
+            <div class="results-section">
+                <h2 class="section-title">計算結果</h2>
+                
+                <div class="result-item">
+                    <div class="result-title">升級所需總妖魄</div>
+                    <div class="result-value highlight" id="totalSouls">0</div>
+                </div>
+                
+                <div class="result-item">
+                    <div class="result-title">還需要挑戰萬妖次數</div>
+                    <div class="result-value" id="totalBattles">0 場</div>
+                    <div class="info-text">基於當前每場可獲妖魄計算</div>
+                </div>
+                
+                <div class="result-item">
+                    <div class="result-title">考慮萬妖令後還需場次</div>
+                    <div class="result-value" id="battlesWithTickets">0 場</div>
+                    <div class="info-text">使用預計萬妖令後仍需挑戰的次數</div>
+                </div>
+                
+                <div class="result-item">
+                    <div class="result-title">升級所需時間（周）</div>
+                    <div class="result-value" id="weeksNeeded">0 周</div>
+                    <div class="info-text">按每周3場計算</div>
+                </div>
+                
+                <div class="result-item">
+                    <div class="result-title">各屬性升級需求</div>
+                    <table class="breakdown-table">
+                        <thead>
+                            <tr>
+                                <th>屬性</th>
+                                <th>當前等級</th>
+                                <th>目標等級</th>
+                                <th>所需妖魄</th>
+                            </tr>
+                        </thead>
+                        <tbody id="breakdownTable">
+                            <!-- 數據將由JavaScript填充 -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="result-item">
+                    <div class="result-title">距離突破可挑戰次數</div>
+                    <div class="result-value" id="battlesBeforeBreakthrough">0 場</div>
+                    <div class="info-text">在突破前可完成的萬妖挑戰次數</div>
+                </div>
+                
+                <div class="result-item">
+                    <div class="result-title">能否在突破前升滿</div>
+                    <div class="result-value" id="canCompleteBeforeBreakthrough">--</div>
+                    <div id="breakthroughMessage"></div>
+                </div>
+                
+                <div class="result-item">
+                    <div class="result-title">突破當週規劃</div>
+                    <div id="breakthroughWeekPlan">--</div>
+                    <div id="weekPlanDetails"></div>
+                </div>
+                
+                <div class="result-item">
+                    <div class="result-title">最佳挑戰策略</div>
+                    <div id="strategyTips">--</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="note-box">
+            <div class="note-title">使用說明與注意事項：</div>
+            <p>1. 本工具數據基於一念逍遙官方提供的化靈台升級消耗表，僅供參考。</p>
+            <p>2. 萬妖挑戰每週三至週日開放，週日23:59結算，可考慮在結算前挑戰以獲得更多妖魄。</p>
+            <p>3. 突破大境界當週可以提前存儲挑戰次數，建議在突破前保留3次挑戰機會。</p>
+            <p>4. 真仙、金仙、太乙、大羅四個大境界的化靈台升級消耗相同，但遊戲中需分開選擇。</p>
+            <p>5. 週日結算額外妖魄數據：第4-10名+240妖魄，第11-50名+120妖魄，前3名數據待補充。</p>
+            <p>6. <strong>如何完善週日結算數據：</strong>在JavaScript代碼中找到"sundayBonus"對象，補充第1名和第2-3名的妖魄數值即可。</p>
+        </div>
+        
+        <footer>
+            <p>一念逍遙化靈臺升級計算器 | 數據來源：官方化靈台消耗表 | 本工具僅供遊戲參考</p>
+            <p>© 2023 一念逍遙攻略工具 | 適配手機、平板、電腦</p>
+        </footer>
+    </div>
+
+    <script>
+        // 化靈臺升級消耗數據
+        const soulData = {
+            "人界": {
+                "修為": [20,20,35,35,35,45,45,45,55,55,75,75,75,100,100,120,120,120,140,140,175,175,175,210,210,240,240,285,285,350],
+                "品質": [20,20,35,35,35,45,45,45,55,55,75,75,75,100,100,120,120,120,140,140,175,175,175,210,210,240,240,285,285,350],
+                "靈湧": [25,25,30,30,30,35,35,35,45,45,55,55,55,70,70,80,80,80,90,90,100,100,100,115,115,125,125,150,150,180],
+                "高品": [20,20,25,25,25,30,30,30,35,35,45,45,45,55,55,65,65,65,75,75,80,80,80,90,90,100,100,120,120,145]
+            },
+            "返虛": {
+                "修為": [25,25,35,35,35,45,45,45,60,60,80,80,80,105,105,125,125,125,150,150,185,185,185,220,220,255,255,300,300,370],
+                "品質": [35,35,50,50,50,70,70,70,85,85,120,120,120,155,155,190,190,190,225,225,280,280,280,330,330,380,380,450,450,555],
+                "靈湧": [35,35,45,45,45,60,60,60,70,70,90,90,90,110,110,125,125,125,145,145,160,160,160,180,180,200,200,235,235,290],
+                "高品": [25,25,35,35,35,40,40,40,50,50,65,65,65,75,75,90,90,90,100,100,115,115,115,125,125,140,140,165,165,200]
+            },
+            "合體": {
+                "修為": [30,30,45,45,45,60,60,60,75,75,105,105,105,135,135,165,165,165,190,190,235,235,235,280,280,325,325,385,385,475],
+                "品質": [45,45,65,65,65,90,90,90,110,110,155,155,155,200,200,245,245,245,290,290,355,355,355,420,420,490,490,575,575,710],
+                "靈湧": [45,45,60,60,60,75,75,75,90,90,115,115,115,140,140,160,160,160,185,185,210,210,210,230,230,255,255,300,300,370],
+                "高品": [30,30,40,40,40,50,50,50,65,65,80,80,80,95,95,115,115,115,130,130,145,145,145,160,160,180,180,210,210,260]
+            },
+            "大成": {
+                "修為": [30,30,45,45,45,60,60,60,75,75,105,105,105,135,135,165,165,165,190,190,235,235,235,280,280,325,325,385,385,475],
+                "品質": [45,45,65,65,65,90,90,90,110,110,155,155,155,200,200,245,245,245,290,290,355,355,355,420,420,490,490,575,575,710],
+                "靈湧": [45,45,60,60,60,75,75,75,90,90,115,115,115,140,140,160,160,160,185,185,210,210,210,230,230,255,255,300,300,370],
+                "高品": [30,30,40,40,40,50,50,50,65,65,80,80,80,95,95,115,115,115,130,130,145,145,145,160,160,180,180,210,210,260]
+            },
+            "渡劫": {
+                "修為": [40,40,60,60,60,80,80,80,100,100,140,140,140,180,180,220,220,220,265,265,325,325,325,385,385,445,445,525,525,645],
+                "品質": [60,60,90,90,90,120,120,120,150,150,210,210,210,275,275,335,335,335,395,395,485,485,485,575,575,665,665,790,790,970],
+                "靈湧": [65,65,80,80,80,100,100,100,125,125,155,155,155,190,190,220,220,220,250,250,285,285,285,315,315,345,345,410,410,505],
+                "高品": [45,45,55,55,55,70,70,70,90,90,110,110,110,130,130,155,155,155,175,175,200,200,200,220,220,245,245,285,285,355]
+            },
+            "真仙": {
+                "修為": [60,60,90,90,90,115,115,115,145,145,205,205,205,265,265,320,320,320,380,380,465,465,465,555,555,640,640,760,760,935],
+                "品質": [90,90,130,130,130,175,175,175,220,220,305,305,305,395,395,480,480,480,570,570,700,700,700,830,830,965,965,1140,1140,1400],
+                "靈湧": [90,90,120,120,120,145,145,145,180,180,230,230,230,275,275,320,320,320,365,365,410,410,410,455,455,500,500,590,590,730],
+                "高品": [65,65,85,85,85,100,100,100,125,125,160,160,160,190,190,225,225,225,255,255,285,285,285,320,320,350,350,415,415,510]
+            },
+            "金仙": {
+                "修為": [60,60,90,90,90,115,115,115,145,145,205,205,205,265,265,320,320,320,380,380,465,465,465,555,555,640,640,760,760,935],
+                "品質": [90,90,130,130,130,175,175,175,220,220,305,305,305,395,395,480,480,480,570,570,700,700,700,830,830,965,965,1140,1140,1400],
+                "靈湧": [90,90,120,120,120,145,145,145,180,180,230,230,230,275,275,320,320,320,365,365,410,410,410,455,455,500,500,590,590,730],
+                "高品": [65,65,85,85,85,100,100,100,125,125,160,160,160,190,190,225,225,225,255,255,285,285,285,320,320,350,350,415,415,510]
+            },
+            "太乙": {
+                "修為": [60,60,90,90,90,115,115,115,145,145,205,205,205,265,265,320,320,320,380,380,465,465,465,555,555,640,640,760,760,935],
+                "品質": [90,90,130,130,130,175,175,175,220,220,305,305,305,395,395,480,480,480,570,570,700,700,700,830,830,965,965,1140,1140,1400],
+                "靈湧": [90,90,120,120,120,145,145,145,180,180,230,230,230,275,275,320,320,320,365,365,410,410,410,455,455,500,500,590,590,730],
+                "高品": [65,65,85,85,85,100,100,100,125,125,160,160,160,190,190,225,225,225,255,255,285,285,285,320,320,350,350,415,415,510]
+            },
+            "大羅": {
+                "修為": [60,60,90,90,90,115,115,115,145,145,205,205,205,265,265,320,320,320,380,380,465,465,465,555,555,640,640,760,760,935],
+                "品質": [90,90,130,130,130,175,175,175,220,220,305,305,305,395,395,480,480,480,570,570,700,700,700,830,830,965,965,1140,1140,1400],
+                "靈湧": [90,90,120,120,120,145,145,145,180,180,230,230,230,275,275,320,320,320,365,365,410,410,410,455,455,500,500,590,590,730],
+                "高品": [65,65,85,85,85,100,100,100,125,125,160,160,160,190,190,225,225,225,255,255,285,285,285,320,320,350,350,415,415,510]
+            }
+        };
+
+        // 各境界萬妖首領與妖魄數據
+        const monsterData = {
+            "人界": [
+                { name: "玄猿王", power: "無", souls: 50 },
+                { name: "修羅王", power: "4000萬", souls: 80 },
+                { name: "鯤鵬妖王", power: "7000萬", souls: 120 },
+                { name: "首領妖獸", power: "8000萬", souls: 180 }
+            ],
+            "返虛": [
+                { name: "基礎妖獸", power: "無", souls: 80 },
+                { name: "進階妖獸", power: "3億", souls: 120 },
+                { name: "精英妖獸", power: "8億", souls: 180 },
+                { name: "首領妖獸", power: "15億", souls: 250 }
+            ],
+            "合體": [
+                { name: "基礎妖獸", power: "無", souls: 120 },
+                { name: "進階妖獸", power: "30億", souls: 180 },
+                { name: "精英妖獸", power: "80億", souls: 250 },
+                { name: "首領妖獸", power: "150億", souls: 350 }
+            ],
+            "大成": [
+                { name: "基礎妖獸", power: "無", souls: 150 },
+                { name: "進階妖獸", power: "200億", souls: 220 },
+                { name: "精英妖獸", power: "500億", souls: 300 },
+                { name: "首領妖獸", power: "1000億", souls: 400 }
+            ],
+            "渡劫": [
+                { name: "基礎妖獸", power: "無", souls: 200 },
+                { name: "蒼玄巫王", power: "3000億", souls: 300 },
+                { name: "嘯月狼王", power: "3600億", souls: 400 },
+                { name: "深淵氏人", power: "4200億", souls: 500 },
+                { name: "蒼靈夔牛王", power: "5000億", souls: 500 }
+            ],
+            "真仙": [
+                { name: "朱厭天王", power: "無", souls: 120 },
+                { name: "風靈天玉", power: "1.0萬億", souls: 180 },
+                { name: "兩黃天王", power: "1.2萬億", souls: 210 },
+                { name: "涅槃鳳王", power: "1.4萬億", souls: 250 },
+                { name: "九霄麒麟主", power: "1.6萬億", souls: 280 },
+                { name: "魔將相柳", power: "1.8萬億", souls: 310 },
+            ],
+            "金仙": [
+                { name: "基礎妖獸", power: "無", souls: 200 },
+                { name: "進階妖獸", power: "2.5萬億", souls: 300 },
+                { name: "精英妖獸", power: "3.0萬億", souls: 350 },
+                { name: "首領妖獸", power: "3.5萬億", souls: 400 },
+                { name: "神獸朱雀", power: "4.0萬億", souls: 450 },
+                { name: "神獸玄武", power: "4.5萬億", souls: 500 }
+            ],
+            "太乙": [
+                { name: "金烏天王", power: "無", souls: 250 },
+                { name: "歸墟鵬王", power: "11萬億", souls: 350 },
+                { name: "祸斗天王", power: "13萬億", souls: 400 },
+                { name: "御龜天王", power: "15萬億", souls: 450 },
+                { name: "覆海螭龍王", power: "17萬億", souls: 500 },
+                { name: "魔將禺疆", power: "20萬億", souls: 550 }
+            ],
+            "大羅": [
+                { name: "基礎妖獸", power: "無", souls: 300 },
+                { name: "進階妖獸", power: "10萬億", souls: 400 },
+                { name: "精英妖獸", power: "12萬億", souls: 450 },
+                { name: "首領妖獸", power: "15萬億", souls: 500 },
+                { name: "神獸混沌", power: "18萬億", souls: 550 },
+                { name: "神獸饕餮", power: "20萬億", souls: 600 }
+            ]
+        };
+
+        // 週日結算額外妖魄數據（第1名和第2-3名需要完善）
+        const sundayBonus = {
+            "1": 0, // 第1名（待補充，例如：500）
+            "2-3": 0, // 第2-3名（待補充，例如：300）
+            "4-10": 240, // 第4-10名
+            "11-50": 120, // 第11-50名
+            "other": 0 // 50名以後
+        };
+
+        // DOM元素
+        const realmSelect = document.getElementById('realm');
+        const cultivationSelect = document.getElementById('cultivation');
+        const qualitySelect = document.getElementById('quality');
+        const spiritFlowSelect = document.getElementById('spiritFlow');
+        const highQualitySelect = document.getElementById('highQuality');
+        const monsterSelect = document.getElementById('monsterSelect');
+        const monsterPowerEl = document.getElementById('monsterPower');
+        const monsterSoulsEl = document.getElementById('monsterSouls');
+        const ticketsInput = document.getElementById('tickets');
+        
+        // 時間相關元素
+        const daysToBreakthroughInput = document.getElementById('daysToBreakthrough');
+        const hoursToBreakthroughInput = document.getElementById('hoursToBreakthrough');
+        const minutesToBreakthroughInput = document.getElementById('minutesToBreakthrough');
+        const countdownContainer = document.getElementById('countdownContainer');
+        const countdownDaysEl = document.getElementById('countdownDays');
+        const countdownHoursEl = document.getElementById('countdownHours');
+        const countdownMinutesEl = document.getElementById('countdownMinutes');
+        const currentBeijingTimeEl = document.getElementById('currentBeijingTime');
+        
+        // 進階選項元素
+        const considerWeekCheckbox = document.getElementById('considerWeek');
+        const keepThreeBattlesCheckbox = document.getElementById('keepThreeBattles');
+        const includeSundayBonusCheckbox = document.getElementById('includeSundayBonus');
+        const sundayBonusOptions = document.getElementById('sundayBonusOptions');
+        const sundayRankSelect = document.getElementById('sundayRank');
+        
+        // 結果元素
+        const totalSoulsEl = document.getElementById('totalSouls');
+        const totalBattlesEl = document.getElementById('totalBattles');
+        const battlesWithTicketsEl = document.getElementById('battlesWithTickets');
+        const weeksNeededEl = document.getElementById('weeksNeeded');
+        const breakdownTableEl = document.getElementById('breakdownTable');
+        
+        // 時間規劃結果元素
+        const battlesBeforeBreakthroughEl = document.getElementById('battlesBeforeBreakthrough');
+        const canCompleteBeforeBreakthroughEl = document.getElementById('canCompleteBeforeBreakthrough');
+        const breakthroughMessageEl = document.getElementById('breakthroughMessage');
+        const breakthroughWeekPlanEl = document.getElementById('breakthroughWeekPlan');
+        const weekPlanDetailsEl = document.getElementById('weekPlanDetails');
+        const strategyTipsEl = document.getElementById('strategyTips');
+        
+        // 按鈕
+        const calculateBtn = document.getElementById('calculateBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        
+        // 當前選擇的妖魄數量
+        let currentSoulsPerBattle = 0;
+        
+        // 倒數計時器變數
+        let countdownTimer = null;
+        let breakthroughTime = null;
+        
+        // 獲取北京時間函數
+        function getBeijingTime() {
+            // 北京時間是UTC+8
+            const now = new Date();
+            const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+            // 轉換為北京時間 (UTC+8)
+            return new Date(utc + (3600000 * 8));
+        }
+        
+        // 格式化時間顯示
+        function formatTime(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            const seconds = String(date.getSeconds()).padStart(2, '0');
+            return `${year}年${month}月${day}日 ${hours}:${minutes}:${seconds}`;
+        }
+        
+        // 更新當前北京時間顯示
+        function updateBeijingTime() {
+            const beijingTime = getBeijingTime();
+            currentBeijingTimeEl.textContent = formatTime(beijingTime);
+        }
+        
+        // 初始化等級下拉選單
+        function initLevelSelects() {
+            const levelOptions = [];
+            for (let i = 0; i <= 30; i++) {
+                levelOptions.push(`<option value="${i}">${i}級</option>`);
+            }
+            
+            cultivationSelect.innerHTML = levelOptions.join('');
+            qualitySelect.innerHTML = levelOptions.join('');
+            spiritFlowSelect.innerHTML = levelOptions.join('');
+            highQualitySelect.innerHTML = levelOptions.join('');
+            
+            // 設置默認值
+            cultivationSelect.value = 0;
+            qualitySelect.value = 0;
+            spiritFlowSelect.value = 0;
+            highQualitySelect.value = 0;
+        }
+        
+        // 初始化萬妖首領選擇
+        function initMonsterSelect() {
+            const realm = realmSelect.value;
+            const monsters = monsterData[realm] || [];
+            
+            let options = '';
+            monsters.forEach(monster => {
+                // 格式化顯示：戰力 - 名稱 - 妖魄
+                let displayText = '';
+                if (monster.power === "無") {
+                    displayText = `${monster.name} - ${monster.souls}妖魄`;
+                } else {
+                    // 提取數值部分用於排序
+                    let powerValue = monster.power;
+                    // 移除單位以便排序
+                    if (powerValue.includes("萬億")) {
+                        powerValue = parseFloat(powerValue.replace("萬億", ""));
+                        // 將萬億轉換為數字用於排序
+                        displayText = `${monster.power.replace("萬億", "")} - ${monster.name} - ${monster.souls}妖魄`;
+                    } else if (powerValue.includes("億")) {
+                        powerValue = parseFloat(powerValue.replace("億", ""));
+                        displayText = `${monster.power} - ${monster.name} - ${monster.souls}妖魄`;
+                    } else {
+                        displayText = `${monster.power} - ${monster.name} - ${monster.souls}妖魄`;
+                    }
+                }
+                
+                options += `<option value="${monster.souls}" data-power="${monster.power}" data-name="${monster.name}">${displayText}</option>`;
+            });
+            
+            monsterSelect.innerHTML = options;
+            
+            // 更新顯示
+            if (monsters.length > 0) {
+                const firstMonster = monsters[0];
+                monsterPowerEl.textContent = `戰力要求：${firstMonster.power}`;
+                monsterSoulsEl.textContent = `妖魄：${firstMonster.souls}`;
+                currentSoulsPerBattle = firstMonster.souls;
+            }
+        }
+        
+        // 更新萬妖首領選擇
+        function updateMonsterSelect() {
+            const selectedValue = monsterSelect.value;
+            const selectedOption = monsterSelect.options[monsterSelect.selectedIndex];
+            const power = selectedOption.getAttribute('data-power');
+            const name = selectedOption.getAttribute('data-name');
+            
+            monsterPowerEl.textContent = `戰力要求：${power}`;
+            monsterSoulsEl.textContent = `妖魄：${selectedValue}`;
+            currentSoulsPerBattle = parseInt(selectedValue);
+        }
+        
+        // 開始倒數計時
+        function startCountdown() {
+            // 清除現有的計時器
+            if (countdownTimer) {
+                clearInterval(countdownTimer);
+            }
+            
+            const days = parseInt(daysToBreakthroughInput.value) || 0;
+            const hours = parseInt(hoursToBreakthroughInput.value) || 0;
+            const minutes = parseInt(minutesToBreakthroughInput.value) || 0;
+            
+            // 如果沒有設定時間，隱藏倒數計時
+            if (days === 0 && hours === 0 && minutes === 0) {
+                countdownContainer.style.display = "none";
+                return;
+            }
+            
+            // 計算突破時間（當前北京時間 + 設定的時間）
+            breakthroughTime = getBeijingTime();
+            breakthroughTime.setDate(breakthroughTime.getDate() + days);
+            breakthroughTime.setHours(breakthroughTime.getHours() + hours);
+            breakthroughTime.setMinutes(breakthroughTime.getMinutes() + minutes);
+            
+            // 顯示倒數計時容器
+            countdownContainer.style.display = "block";
+            
+            // 立即更新一次倒數計時
+            updateCountdown();
+            
+            // 每秒更新一次倒數計時
+            countdownTimer = setInterval(updateCountdown, 1000);
+        }
+        
+        // 更新倒數計時顯示
+        function updateCountdown() {
+            if (!breakthroughTime) return;
+            
+            const now = getBeijingTime();
+            const timeRemaining = breakthroughTime - now;
+            
+            // 如果時間已過，顯示0
+            if (timeRemaining <= 0) {
+                countdownDaysEl.textContent = "00";
+                countdownHoursEl.textContent = "00";
+                countdownMinutesEl.textContent = "00";
+                countdownSecondsEl.textContent = "00";
+                clearInterval(countdownTimer);
+                return;
+            }
+            
+            // 計算天、小時、分鐘、秒
+            const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+            
+            // 更新顯示
+            countdownDaysEl.textContent = days.toString().padStart(2, '0');
+            countdownHoursEl.textContent = hours.toString().padStart(2, '0');
+            countdownMinutesEl.textContent = minutes.toString().padStart(2, '0');
+            countdownSecondsEl.textContent = seconds.toString().padStart(2, '0');
+        }
+        
+        // 計算升級需求
+        function calculateUpgradeNeeds() {
+            const realm = realmSelect.value;
+            const cultivationLevel = parseInt(cultivationSelect.value) || 0;
+            const qualityLevel = parseInt(qualitySelect.value) || 0;
+            const spiritFlowLevel = parseInt(spiritFlowSelect.value) || 0;
+            const highQualityLevel = parseInt(highQualitySelect.value) || 0;
+            const perBattle = currentSoulsPerBattle || 0;
+            const tickets = parseInt(ticketsInput.value) || 0;
+            
+            // 獲取當前境界的數據
+            const realmData = soulData[realm];
+            
+            // 計算每個屬性還需要的妖魄
+            const cultivationNeeded = calculateAttributeNeeds(realmData["修為"], cultivationLevel);
+            const qualityNeeded = calculateAttributeNeeds(realmData["品質"], qualityLevel);
+            const spiritFlowNeeded = calculateAttributeNeeds(realmData["靈湧"], spiritFlowLevel);
+            const highQualityNeeded = calculateAttributeNeeds(realmData["高品"], highQualityLevel);
+            
+            // 計算總需求
+            const totalNeeded = cultivationNeeded + qualityNeeded + spiritFlowNeeded + highQualityNeeded;
+            
+            // 計算還需要挑戰的次數
+            const battlesNeeded = perBattle > 0 ? Math.ceil(totalNeeded / perBattle) : 0;
+            
+            // 考慮萬妖令後的場次（每週基礎3場，萬妖令可增加場次）
+            const battlesAfterTickets = Math.max(0, battlesNeeded - tickets);
+            
+            // 計算需要多少周（每週3場）
+            const weeksNeeded = Math.ceil(battlesAfterTickets / 3);
+            
+            // 更新顯示
+            totalSoulsEl.textContent = formatNumber(totalNeeded);
+            totalBattlesEl.textContent = `${battlesNeeded} 場`;
+            battlesWithTicketsEl.textContent = `${battlesAfterTickets} 場`;
+            weeksNeededEl.textContent = `${weeksNeeded} 周`;
+            
+            // 更新明細表
+            updateBreakdownTable(
+                cultivationLevel, cultivationNeeded,
+                qualityLevel, qualityNeeded,
+                spiritFlowLevel, spiritFlowNeeded,
+                highQualityLevel, highQualityNeeded
+            );
+            
+            // 計算時間規劃
+            calculateTimePlan(totalNeeded, perBattle, tickets, battlesNeeded, battlesAfterTickets);
+        }
+        
+        // 計算單個屬性升級所需妖魄
+        function calculateAttributeNeeds(costArray, currentLevel) {
+            let total = 0;
+            // 從當前等級升到30級需要的妖魄
+            for (let i = currentLevel; i < 30; i++) {
+                total += costArray[i];
+            }
+            return total;
+        }
+        
+        // 更新明細表
+        function updateBreakdownTable(cultivationLevel, cultivationNeeded, qualityLevel, qualityNeeded, spiritFlowLevel, spiritFlowNeeded, highQualityLevel, highQualityNeeded) {
+            const attributes = [
+                { name: "修為", current: cultivationLevel, needed: cultivationNeeded },
+                { name: "品質", current: qualityLevel, needed: qualityNeeded },
+                { name: "靈湧", current: spiritFlowLevel, needed: spiritFlowNeeded },
+                { name: "高品", current: highQualityLevel, needed: highQualityNeeded }
+            ];
+            
+            let tableHTML = '';
+            attributes.forEach(attr => {
+                tableHTML += `
+                    <tr>
+                        <td>${attr.name}</td>
+                        <td>${attr.current}</td>
+                        <td>30</td>
+                        <td>${formatNumber(attr.needed)}</td>
+                    </tr>
+                `;
+            });
+            
+            breakdownTableEl.innerHTML = tableHTML;
+        }
+        
+        // 計算時間規劃
+        function calculateTimePlan(totalNeeded, perBattle, tickets, battlesNeeded, battlesAfterTickets) {
+            const days = parseInt(daysToBreakthroughInput.value) || 0;
+            const hours = parseInt(hoursToBreakthroughInput.value) || 0;
+            const minutes = parseInt(minutesToBreakthroughInput.value) || 0;
+            const considerWeek = considerWeekCheckbox.checked;
+            const keepThreeBattles = keepThreeBattlesCheckbox.checked;
+            const includeSundayBonus = includeSundayBonusCheckbox.checked;
+            const sundayRank = sundayRankSelect.value;
+            
+            // 計算總分鐘數
+            const totalMinutes = days * 24 * 60 + hours * 60 + minutes;
+            
+            if (totalMinutes === 0) {
+                // 沒有輸入突破時間
+                battlesBeforeBreakthroughEl.textContent = "請輸入突破時間";
+                canCompleteBeforeBreakthroughEl.textContent = "--";
+                canCompleteBeforeBreakthroughEl.className = "result-value";
+                breakthroughMessageEl.innerHTML = "";
+                breakthroughWeekPlanEl.textContent = "請輸入突破時間以進行規劃";
+                weekPlanDetailsEl.textContent = "";
+                strategyTipsEl.textContent = "請輸入突破時間以獲得最佳策略建議";
+                return;
+            }
+            
+            // 計算每場實際可獲妖魄（考慮週日結算獎勵）
+            let actualPerBattle = perBattle;
+            if (includeSundayBonus && perBattle > 0) {
+                // 假設每5場中有1場是週日結算（簡化計算）
+                const sundayBonusValue = sundayBonus[sundayRank];
+                actualPerBattle = perBattle + (sundayBonusValue / 5);
+            }
+            
+            // 重新計算考慮週日獎勵後的挑戰次數
+            let actualBattlesNeeded = perBattle > 0 ? Math.ceil(totalNeeded / actualPerBattle) : 0;
+            let actualBattlesAfterTickets = Math.max(0, actualBattlesNeeded - tickets);
+            
+            // 如果考慮萬妖開放時間（週三至週日）
+            let battlesBeforeBreakthrough = 0;
+            let message = "";
+            let weekPlan = "";
+            let weekDetails = "";
+            let strategy = "";
+            
+            if (considerWeek) {
+                // 簡單計算：假設每週有5天開放，但每週只能打3場
+                const totalHours = totalMinutes / 60;
+                const daysAvailable = Math.floor(totalHours / 24);
+                const weeksAvailable = Math.floor(daysAvailable / 7);
+                const remainingDays = daysAvailable % 7;
+                
+                // 每週可打3場
+                battlesBeforeBreakthrough = weeksAvailable * 3;
+                
+                // 剩餘天數中，如果是週三到週日，則可能還可以打
+                // 這裡簡化計算：假設剩餘天數中有3/7的機會可以打（實際取決於具體星期幾）
+                const possibleBattlesInRemainingDays = Math.min(3, Math.floor(remainingDays * 3 / 5));
+                battlesBeforeBreakthrough += possibleBattlesInRemainingDays;
+                
+                message = `距離突破還有約 ${days} 天 ${hours} 小時 ${minutes} 分鐘，考慮萬妖開放時間，預計可完成 ${battlesBeforeBreakthrough} 場挑戰。`;
+                
+                // 檢查是否可以在突破前完成
+                if (actualBattlesAfterTickets <= battlesBeforeBreakthrough) {
+                    canCompleteBeforeBreakthroughEl.textContent = "可以";
+                    canCompleteBeforeBreakthroughEl.className = "result-value success";
+                    breakthroughMessageEl.innerHTML = `<span class="success">✓ 恭喜！您可以在突破前完成化靈臺升級。</span>`;
+                } else {
+                    canCompleteBeforeBreakthroughEl.textContent = "無法";
+                    canCompleteBeforeBreakthroughEl.className = "result-value warning";
+                    const remainingBattles = actualBattlesAfterTickets - battlesBeforeBreakthrough;
+                    breakthroughMessageEl.innerHTML = `<span class="warning">✗ 無法在突破前完成升級，還差 ${remainingBattles} 場萬妖挑戰。</span>`;
+                }
+                
+                // 突破當週規劃
+                if (keepThreeBattles) {
+                    weekPlan = "建議為突破當週保留3次挑戰機會";
+                    
+                    // 計算今天星期幾
+                    const today = getBeijingTime();
+                    const dayOfWeek = today.getDay(); // 0=週日, 1=週一, ...
+                    
+                    // 突破日期
+                    const breakthroughDate = getBeijingTime();
+                    breakthroughDate.setDate(breakthroughDate.getDate() + days);
+                    breakthroughDate.setHours(breakthroughDate.getHours() + hours);
+                    breakthroughDate.setMinutes(breakthroughDate.getMinutes() + minutes);
+                    
+                    // 判斷突破當週是否還有挑戰機會
+                    const breakthroughDayOfWeek = breakthroughDate.getDay();
+                    
+                    // 如果突破時間在週三至週日之間，則有機會
+                    if (breakthroughDayOfWeek >= 3 || breakthroughDayOfWeek === 0) {
+                        weekDetails = "突破當天在萬妖開放時間內，可以使用保留的3次挑戰機會。";
+                    } else {
+                        weekDetails = "突破當天不在萬妖開放時間內（週一或週二），建議提前使用挑戰機會。";
+                    }
+                } else {
+                    weekPlan = "不保留挑戰機會，盡快完成升級";
+                    weekDetails = "建議在突破前盡可能完成更多挑戰，以確保升級完成。";
+                }
+                
+                // 策略建議
+                strategy = "策略建議：";
+                if (includeSundayBonus) {
+                    const bonusAmount = sundayBonus[sundayRank];
+                    if (bonusAmount > 0) {
+                        strategy += ` 盡量在週日23:59前完成挑戰以獲得額外${bonusAmount}妖魄獎勵。`;
+                    }
+                }
+                
+                if (tickets > 0) {
+                    strategy += ` 您計劃使用 ${tickets} 個萬妖令，可以在關鍵時刻使用以加速升級。`;
+                }
+                
+                if (days < 7) {
+                    strategy += " 突破時間較近，建議優先升級最重要的屬性（修為/品質）。";
+                }
+                
+                // 根據妖魄獲取量給建議
+                if (currentSoulsPerBattle < 200) {
+                    strategy += " 當前每場獲取的妖魄較少，建議優先挑戰更高級的萬妖首領。";
+                }
+                
+            } else {
+                // 不考慮萬妖開放時間，簡單按天計算
+                const totalHours = totalMinutes / 60;
+                const weeks = Math.floor(totalHours / (24 * 7));
+                const remainingDays = Math.floor((totalHours % (24 * 7)) / 24);
+                
+                battlesBeforeBreakthrough = weeks * 3;
+                if (remainingDays > 0) {
+                    battlesBeforeBreakthrough += Math.min(3, 1); // 假設剩餘天數至少可以打1場
+                }
+                
+                message = `距離突破還有約 ${days} 天 ${hours} 小時 ${minutes} 分鐘，預計可完成 ${battlesBeforeBreakthrough} 場挑戰。`;
+                
+                // 檢查是否可以在突破前完成
+                if (actualBattlesAfterTickets <= battlesBeforeBreakthrough) {
+                    canCompleteBeforeBreakthroughEl.textContent = "可以";
+                    canCompleteBeforeBreakthroughEl.className = "result-value success";
+                    breakthroughMessageEl.innerHTML = `<span class="success">✓ 恭喜！您可以在突破前完成化靈臺升級。</span>`;
+                } else {
+                    canCompleteBeforeBreakthroughEl.textContent = "無法";
+                    canCompleteBeforeBreakthroughEl.className = "result-value warning";
+                    const remainingBattles = actualBattlesAfterTickets - battlesBeforeBreakthrough;
+                    breakthroughMessageEl.innerHTML = `<span class="warning">✗ 無法在突破前完成升級，還差 ${remainingBattles} 場萬妖挑戰。</span>`;
+                }
+                
+                weekPlan = "未考慮萬妖開放時間，規劃可能不準確";
+                weekDetails = "";
+                strategy = "建議啟用「考慮萬妖開放時間」選項以獲得精確規劃。";
+            }
+            
+            // 更新顯示
+            battlesBeforeBreakthroughEl.textContent = `${battlesBeforeBreakthrough} 場`;
+            breakthroughWeekPlanEl.textContent = weekPlan;
+            weekPlanDetailsEl.textContent = weekDetails;
+            strategyTipsEl.textContent = strategy;
+        }
+        
+        // 格式化數字（添加千位分隔符）
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+        
+        // 重置表單
+        function resetForm() {
+            realmSelect.value = "人界";
+            cultivationSelect.value = "0";
+            qualitySelect.value = "0";
+            spiritFlowSelect.value = "0";
+            highQualitySelect.value = "0";
+            ticketsInput.value = "0";
+            daysToBreakthroughInput.value = "0";
+            hoursToBreakthroughInput.value = "0";
+            minutesToBreakthroughInput.value = "0";
+            countdownContainer.style.display = "none";
+            considerWeekCheckbox.checked = true;
+            keepThreeBattlesCheckbox.checked = true;
+            includeSundayBonusCheckbox.checked = false;
+            sundayRankSelect.value = "4-10";
+            sundayBonusOptions.style.display = "none";
+            
+            // 清除倒數計時器
+            if (countdownTimer) {
+                clearInterval(countdownTimer);
+                countdownTimer = null;
+            }
+            
+            // 重新初始化萬妖選擇
+            initMonsterSelect();
+            
+            // 重置結果
+            totalSoulsEl.textContent = "0";
+            totalBattlesEl.textContent = "0 場";
+            battlesWithTicketsEl.textContent = "0 場";
+            weeksNeededEl.textContent = "0 周";
+            breakdownTableEl.innerHTML = "";
+            
+            battlesBeforeBreakthroughEl.textContent = "0 場";
+            canCompleteBeforeBreakthroughEl.textContent = "--";
+            canCompleteBeforeBreakthroughEl.className = "result-value";
+            breakthroughMessageEl.innerHTML = "";
+            breakthroughWeekPlanEl.textContent = "--";
+            weekPlanDetailsEl.textContent = "";
+            strategyTipsEl.textContent = "--";
+        }
+        
+        // 事件監聽器
+        calculateBtn.addEventListener('click', calculateUpgradeNeeds);
+        resetBtn.addEventListener('click', resetForm);
+        
+        // 當突破時間變化時，更新倒數計時
+        daysToBreakthroughInput.addEventListener('input', startCountdown);
+        hoursToBreakthroughInput.addEventListener('input', startCountdown);
+        minutesToBreakthroughInput.addEventListener('input', startCountdown);
+        
+        // 當境界變化時，更新萬妖選擇
+        realmSelect.addEventListener('change', function() {
+            initMonsterSelect();
+            calculateUpgradeNeeds();
+        });
+        
+        // 當萬妖選擇變化時
+        monsterSelect.addEventListener('change', function() {
+            updateMonsterSelect();
+            calculateUpgradeNeeds();
+        });
+        
+        // 當週日結算選項變化時，顯示/隱藏排名選擇
+        includeSundayBonusCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                sundayBonusOptions.style.display = "block";
+            } else {
+                sundayBonusOptions.style.display = "none";
+            }
+            calculateUpgradeNeeds();
+        });
+        
+        // 當屬性等級變化時，重新計算
+        cultivationSelect.addEventListener('change', calculateUpgradeNeeds);
+        qualitySelect.addEventListener('change', calculateUpgradeNeeds);
+        spiritFlowSelect.addEventListener('change', calculateUpgradeNeeds);
+        highQualitySelect.addEventListener('change', calculateUpgradeNeeds);
+        
+        // 當萬妖令數量變化時，重新計算
+        ticketsInput.addEventListener('input', calculateUpgradeNeeds);
+        
+        // 當進階選項變化時，重新計算
+        considerWeekCheckbox.addEventListener('change', calculateUpgradeNeeds);
+        keepThreeBattlesCheckbox.addEventListener('change', calculateUpgradeNeeds);
+        includeSundayBonusCheckbox.addEventListener('change', calculateUpgradeNeeds);
+        sundayRankSelect.addEventListener('change', calculateUpgradeNeeds);
+        
+        // 初始設定
+        initLevelSelects();
+        initMonsterSelect();
+        startCountdown();
+        calculateUpgradeNeeds();
+        
+        // 更新北京時間顯示
+        updateBeijingTime();
+        setInterval(updateBeijingTime, 1000);
+    </script>
+</body>
+</html>
