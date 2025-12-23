@@ -1,0 +1,400 @@
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>關聯式經驗值計算器</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', 'Microsoft JhengHei', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            margin-top: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: #fff;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+            display: flex;
+            align-items: center;
+        }
+        
+        h2 i {
+            margin-right: 10px;
+            color: #3498db;
+        }
+        
+        .subtitle {
+            color: #ecf0f1;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            text-align: center;
+            max-width: 600px;
+        }
+        
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            transition: background 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        button i {
+            margin-right: 8px;
+        }
+        
+        button:hover {
+            background: #2980b9;
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .result h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .result h3 i {
+            margin-right: 8px;
+            color: #3498db;
+        }
+        
+        .result-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #e74c3c;
+        }
+        
+        .conversion-info {
+            background-color: #e8f4fc;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .conversion-info h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .conversion-info h3 i {
+            margin-right: 8px;
+            color: #3498db;
+        }
+        
+        .conversion-info ul {
+            list-style-type: none;
+            padding-left: 5px;
+        }
+        
+        .conversion-info li {
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .conversion-info li:before {
+            content: "•";
+            color: #3498db;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+        
+        .decimal-note {
+            text-align: center;
+            margin-top: 15px;
+            font-style: italic;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        .sync-notice {
+            text-align: center;
+            background-color: #ffeaa7;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #2d3436;
+        }
+        
+        @media (max-width: 768px) {
+            .card-container {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>關聯式經驗值計算器</h1>
+    </header>
+    
+    <div class="container">
+        <div class="conversion-info">
+            <h3><i class="fas fa-exchange-alt"></i>經驗轉換規則</h3>
+            <ul>
+                <li>8秒 = 1周天 = <span id="customExpDisplay">1.00</span> 經驗</li>
+                <li>1分鐘 = 7.5周天 = <span id="minuteExpDisplay">7.50</span> 經驗</li>
+                <li>1小時 = 450周天 = <span id="hourExpDisplay">450.00</span> 經驗</li>
+            </ul>
+        </div>
+        
+                <div class="input-group">
+                    <label for="customExp">自定義經驗值（1周天）</label>
+                    <input type="number" id="customExp" min="0.01" step="0.01" value="1.00" oninput="updateAllCalculations()">
+                </div>
+
+        <div class="card-container">
+            <div class="card">
+                <h2><i class="fas fa-clock"></i>時間 → 經驗值</h2>
+
+                <div class="input-group">
+                    <label for="hours">小時</label>
+                    <input type="number" id="hours" min="0" value="0" oninput="updateAllCalculations()">
+                </div>
+                <div class="input-group">
+                    <label for="minutes">分鐘</label>
+                    <input type="number" id="minutes" min="0" value="0" oninput="updateAllCalculations()">
+                </div>
+                <div class="input-group">
+                    <label for="seconds">秒數</label>
+                    <input type="number" id="seconds" min="0" value="0" oninput="updateAllCalculations()">
+                </div>
+                
+                <div class="result">
+                    <h3><i class="fas fa-calculator"></i>可獲得經驗值</h3>
+                    <p class="result-value" id="totalExp">0.00</p>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2><i class="fas fa-bullseye"></i>經驗值 → 時間</h2>
+                <div class="input-group">
+                    <label for="targetExp">目標經驗值</label>
+                    <input type="number" id="targetExp" min="0.01" step="0.01" value="0.00" oninput="updateTimeFromExp()">
+                </div>
+                
+                <div class="result">
+                    <h3><i class="fas fa-hourglass-half"></i>所需時間</h3>
+                    <p class="result-value" id="requiredTime">0小時 0分鐘 0秒</p>
+                </div>
+                
+             </div>
+        </div>
+        
+        <div class="sync-notice">
+            <i class="fas fa-info-circle"></i> 兩個計算區域已關聯，修改任一區域的數據，另一區域會自動更新
+        </div>
+        
+        <p class="decimal-note">所有計算結果精確到小數點後2位</p>
+    </div>
+
+    <script>
+        // 更新转换规则显示
+        function updateConversionRules() {
+            const customExp = parseFloat(document.getElementById('customExp').value) || 1.00;
+            document.getElementById('customExpDisplay').textContent = customExp.toFixed(2);
+            document.getElementById('minuteExpDisplay').textContent = (customExp * 7.5).toFixed(2);
+            document.getElementById('hourExpDisplay').textContent = (customExp * 450).toFixed(2);
+        }
+        
+        // 根据时间计算经验值
+        function calculateExpFromTime() {
+            const customExp = parseFloat(document.getElementById('customExp').value) || 1.00;
+            const hours = parseFloat(document.getElementById('hours').value) || 0;
+            const minutes = parseFloat(document.getElementById('minutes').value) || 0;
+            const seconds = parseFloat(document.getElementById('seconds').value) || 0;
+            
+            // 计算总秒数
+            const totalSeconds = hours * 3600 + minutes * 60 + seconds;
+            
+            // 计算周天数量（每8秒一个周天）
+            const cycles = totalSeconds / 8;
+            
+            // 计算总经验值
+            const totalExp = cycles * customExp;
+            
+            // 显示结果（保留2位小数）
+            document.getElementById('totalExp').textContent = totalExp.toFixed(2);
+            
+            // 更新目标经验值输入框
+            document.getElementById('targetExp').value = totalExp.toFixed(2);
+            
+            // 计算并显示所需时间
+            calculateTimeFromExp();
+        }
+        
+        // 根据经验值计算所需时间
+        function calculateTimeFromExp() {
+            const customExp = parseFloat(document.getElementById('customExp').value) || 1.00;
+            const targetExp = parseFloat(document.getElementById('targetExp').value) || 0;
+            
+            if (targetExp <= 0) {
+                document.getElementById('requiredTime').textContent = "0小時 0分鐘 0秒";
+                return;
+            }
+            
+            // 计算需要的周天数量
+            const cycles = targetExp / customExp;
+            
+            // 计算总秒数
+            const totalSeconds = cycles * 8;
+            
+            // 转换为小时、分钟、秒
+            const hours = Math.floor(totalSeconds / 3600);
+            const remainingSecondsAfterHours = totalSeconds % 3600;
+            const minutes = Math.floor(remainingSecondsAfterHours / 60);
+            const seconds = Math.floor(remainingSecondsAfterHours % 60);
+            
+            // 显示结果
+            document.getElementById('requiredTime').textContent = 
+                `${hours}小時 ${minutes}分鐘 ${seconds}秒`;
+        }
+        
+        // 从经验值更新到时间
+        function updateTimeFromExp() {
+            calculateTimeFromExp();
+            
+            // 根据目标经验值反向计算时间
+            const customExp = parseFloat(document.getElementById('customExp').value) || 1.00;
+            const targetExp = parseFloat(document.getElementById('targetExp').value) || 0;
+            
+            if (targetExp <= 0) {
+                return;
+            }
+            
+            // 计算需要的周天数量
+            const cycles = targetExp / customExp;
+            
+            // 计算总秒数
+            const totalSeconds = cycles * 8;
+            
+            // 转换为小时、分钟、秒
+            const hours = Math.floor(totalSeconds / 3600);
+            const remainingSecondsAfterHours = totalSeconds % 3600;
+            const minutes = Math.floor(remainingSecondsAfterHours / 60);
+            const seconds = Math.floor(remainingSecondsAfterHours % 60);
+            
+            // 更新时间输入框
+            document.getElementById('hours').value = hours;
+            document.getElementById('minutes').value = minutes;
+            document.getElementById('seconds').value = seconds;
+        }
+        
+        // 更新所有计算
+        function updateAllCalculations() {
+            updateConversionRules();
+            calculateExpFromTime();
+        }
+        
+        // 初始化页面
+        window.onload = function() {
+            // 设置初始值为带两位小数的格式
+            document.getElementById('customExp').value = "1.00";
+            document.getElementById('targetExp').value = "0.00";
+            
+            updateAllCalculations();
+        };
+    </script>
+</body>
+</html>
